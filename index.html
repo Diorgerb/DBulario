@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitoramento de Medicamentos de Referência - ANVISA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      background-image: url('https://www.gov.br/anvisa/pt-br/@@site-logo/anvisa.png');
+      background-repeat: no-repeat;
+      background-position: 2rem center;
+      background-size: 100px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    nav {
+      background-color: #0055a5;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1.5rem;
+      font-weight: 600;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    h2 {
+      color: #003366;
+    }
+    input {
+      padding: 0.5rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #e8f1fa;
+    }
+    .alerta {
+      color: #a94442;
+      background-color: #f2dede;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Monitoramento de Medicamentos de Referência - ANVISA</h1>
+</header>
+
+<nav>
+  <a href="#" onclick="mostrarAba('inicio')">Página Inicial</a>
+  <a href="#" onclick="mostrarAba('listaA')"> Lista A - Referências ANVISA</a>
+  <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
+</nav>
+
+<div class="container">
+  <div id="inicio">
+    <h2>Apresentação</h2>
+    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização de bula dos medicamentos de referência perante no Bulário Eletrônico.</p>
+    <p>Através das abas acima, é possível consultar medicamentos listados oficialmente, assim como realizar uma verificação personalizada baseada no bulário eletrônico, facilitando o controle regulatório.</p>
+    <img src="https://www.gov.br/anvisa/pt-br/acesso-a-informacao/imagens-institucionais/anvisa-1.png" alt="Logo ANVISA" style="width: 100%; max-width: 400px; margin-top: 2rem;">
+  </div>
+
+  <div id="listaA" class="hidden">
+    <h2>Lista de Medicamentos de Referência ANVISA</h2>
+    <p><strong>Aviso:</strong> Esta listagem é baseada na <a href="https://www.gov.br/anvisa/pt-br/setorregulado/regularizacao/medicamentos/medicamentos-de-referencia/lista-de-medicamentos-de-referencia" target="_blank">Lista A: medicamentos que contenham um único insumo farmacêutico ativo</a>. Pode haver divergências ou registros obsoletos devido à periodicidade de atualização e eventuais transferências de titularidade. Em caso de dúvidas, ou para consultar medicamentos com mais de um princípio ativo recomendamos consultar a aba de referência personalizada.</p>
+    <input type="text" id="filtroListaA" placeholder="Digite os números de registro separados por vírgula. Ex: "101070234,112600199">
+    <div class="alerta" id="avisoListaA"></div>
+    <table id="tabelaListaA"></table>
+  </div>
+
+  <div id="listaPersonalizada" class="hidden">
+    <h2>Lista de Referência Personalizada (Bulário Eletrônico)</h2>
+    <input type="text" id="filtroPersonalizada" placeholder="Digite os números de registro separados por vírgula Ex:"101070234,112600199"">
+    <div class="alerta" id="avisoPersonalizada"></div>
+    <table id="tabelaPersonalizada"></table>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 - DBulário | Desenvolvido por Diórger Bretas Chaves. Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. Não se trata de um site oficial do governo e não substitui o Bulário Eletrônico.
+
+
+</footer>
+
+<script>
+function mostrarAba(id) {
+  document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function carregarCSV(caminho, callback) {
+  fetch(caminho)
+    .then(response => response.text())
+    .then(csv => {
+      Papa.parse(csv, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          callback(results.data);
+        }
+      });
+    });
+}
+
+function filtrarPorRegistro(data, registrosInput) {
+  const registros = registrosInput.split(',').map(r => r.trim());
+  const encontrados = [];
+  const naoEncontrados = [];
+  const filtrados = data.filter(row => {
+    if (registros.includes(row[Object.keys(row)[3]])) {
+      encontrados.push(row[Object.keys(row)[3]]);
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  registros.forEach(r => {
+    if (!encontrados.includes(r)) naoEncontrados.push(r);
+  });
+
+  return { filtrados: filtrados.length > 0 ? filtrados : data, naoEncontrados };
+}
+
+function montarTabela(elementoId, dados) {
+  const tabela = document.getElementById(elementoId);
+  tabela.innerHTML = '';
+  if (dados.length === 0) return;
+
+  const cabecalho = Object.keys(dados[0]);
+  const thead = '<thead><tr>' + cabecalho.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
+  const tbody = '<tbody>' + dados.map(row => '<tr>' + cabecalho.map(col => `<td>${row[col]}</td>`).join('') + '</tr>').join('') + '</tbody>';
+  tabela.innerHTML = thead + tbody;
+}
+
+carregarCSV('StatusBulasANVISA.csv', dados => {
+  document.getElementById('filtroPersonalizada').addEventListener('input', () => {
+    const { filtrados, naoEncontrados } = filtrarPorRegistro(dados, document.getElementById('filtroPersonalizada').value);
+    montarTabela('tabelaPersonalizada', filtrados);
+    const aviso = naoEncontrados.length > 0 ? `Os seguintes registros não constam no bulário eletrônico: ${naoEncontrados.join(', ')}` : '';
+    document.getElementById('avisoPersonalizada').innerText = aviso;
+  });
+  montarTabela('tabelaPersonalizada', dados);
+});
+
+carregarCSV('tabela_lista_a_incluídos.csv', dados => {
+  document.getElementById('filtroListaA').addEventListener('input', () => {
+    const { filtrados, naoEncontrados } = filtrarPorRegistro(dados, document.getElementById('filtroListaA').value);
+    montarTabela('tabelaListaA', filtrados);
+    const aviso = naoEncontrados.length > 0 ? `Registros não encontrados na lista A: ${naoEncontrados.join(', ')}` : '';
+    document.getElementById('avisoListaA').innerText = aviso;
+  });
+  montarTabela('tabelaListaA', dados);
+});
+</script>
+
+</body>
+</html>
