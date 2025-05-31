@@ -109,7 +109,7 @@
 <div class="container">
   <div id="inicio">
     <h2>Apresentação</h2>
-    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização de bula dos medicamentos de referência perante no Bulário Eletrônico.</p>
+    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização das bulas dos medicamentos de referência junto ao Bulário Eletrônico.</p>
     <p>Através das abas acima, é possível consultar medicamentos listados oficialmente, assim como realizar uma verificação personalizada baseada no bulário eletrônico, facilitando o controle regulatório.</p>
     <img src="https://www.gov.br/anvisa/pt-br/acesso-a-informacao/imagens-institucionais/anvisa-1.png" alt="Logo ANVISA" style="width: 100%; max-width: 400px; margin-top: 2rem;">
   </div>
@@ -117,21 +117,22 @@
   <div id="listaA" class="hidden">
     <h2>Lista de Medicamentos de Referência ANVISA</h2>
     <p><strong>Aviso:</strong> Esta listagem é baseada na <a href="https://www.gov.br/anvisa/pt-br/setorregulado/regularizacao/medicamentos/medicamentos-de-referencia/lista-de-medicamentos-de-referencia" target="_blank">Lista A: medicamentos que contenham um único insumo farmacêutico ativo</a>. Pode haver divergências ou registros obsoletos devido à periodicidade de atualização e eventuais transferências de titularidade. Em caso de dúvidas, ou para consultar medicamentos com mais de um princípio ativo recomendamos consultar a aba de referência personalizada.</p>
-    <input type="text" id="filtroListaA" placeholder="Digite os números de registro separados por vírgula. Ex: "101070234,112600199">
+    <input type="text" id="filtroListaA" placeholder="Digite os números de registro Ex:101070234,112600199">
     <div class="alerta" id="avisoListaA"></div>
     <table id="tabelaListaA"></table>
   </div>
 
   <div id="listaPersonalizada" class="hidden">
     <h2>Lista de Referência Personalizada (Bulário Eletrônico)</h2>
-    <input type="text" id="filtroPersonalizada" placeholder="Digite os números de registro separados por vírgula Ex:"101070234,112600199"">
+    <input type="text" id="filtroPersonalizada" placeholder="Digite os números de registro. Ex:101070234,112600199">
     <div class="alerta" id="avisoPersonalizada"></div>
     <table id="tabelaPersonalizada"></table>
   </div>
 </div>
 
 <footer>
-  &copy; 2025 - DBulário | Desenvolvido por Diórger Bretas Chaves. Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. Não se trata de um site oficial do governo e não substitui o Bulário Eletrônico.
+  &copy; 2025 - DBulário | Desenvolvido por Diórger Bretas Chaves. 
+  Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. Não se trata de um site oficial do governo e não substitui o Bulário Eletrônico.
 
 
 </footer>
