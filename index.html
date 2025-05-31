@@ -97,7 +97,6 @@
 <body>
 
 <header>
-  <img src="logo.png" alt="Logo DBulário" style="height: 60px; vertical-align: middle; margin-right: 1rem;">
   <h1 style="display: inline-block; vertical-align: middle; margin: 0;">Monitoramento de Medicamentos de Referência - ANVISA</h1>
 </header>
 
@@ -107,22 +106,24 @@
   <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
 </nav>
 
-<div id="inicio">
-  <h2>Apresentação</h2>
-  <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização das bulas dos medicamentos de referência junto ao Bulário Eletrônico.</p>
-  <p>Através das abas acima, é possível consultar medicamentos listados oficialmente, assim como realizar uma verificação personalizada baseada no bulário eletrônico, facilitando o controle regulatório.</p>
+<div class="container">
+  <div id="inicio">
+    <h2>Apresentação</h2>
+    <img src="logo.png" alt="Logo DBulário" style="height: 60px; vertical-align: middle; margin-right: 1rem;">
+    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização das bulas dos medicamentos de referência junto ao Bulário Eletrônico.</p>
+    <p>Através das abas acima, é possível consultar medicamentos listados oficialmente, assim como realizar uma verificação personalizada baseada no bulário eletrônico, facilitando o controle regulatório.</p>
 
-  <h3>Informações Institucionais</h3>
-  <p><strong>Nome do projeto:</strong> DBulário</p>
-  <p><strong>Finalidade:</strong> Uso informativo e não oficial, com base em dados públicos disponibilizados pela ANVISA.</p>
+    <h3>Informações Institucionais</h3>
+    <p><strong>Nome do projeto:</strong> DBulário</p>
+    <p><strong>Finalidade:</strong> Uso informativo e não oficial, com base em dados públicos disponibilizados pela ANVISA.</p>
 
-  <h3>Contato</h3>
-  <p>Para sugestões, dúvidas ou contribuições, entre em contato:</p>
-  <ul>
-    <li><strong>E-mail:</strong> <a href="mailto:diorger@gmail.com">diorger@gmail.com</a></li>
-    <li><strong>GitHub:</strong> <a href="https://github.com/diorger" target="_blank">github.com/diorger</a></li>
-  </ul>
-</div>
+    <h3>Contato</h3>
+    <p>Para sugestões, dúvidas ou contribuições, entre em contato:</p>
+    <ul>
+      <li><strong>E-mail:</strong> <a href="mailto:diorger@gmail.com">diorger@gmail.com</a></li>
+      <li><strong>GitHub:</strong> <a href="https://github.com/diorger" target="_blank">github.com/diorger</a></li>
+    </ul>
+  </div>
 
   <div id="listaA" class="hidden">
     <h2>Lista de Medicamentos de Referência ANVISA</h2>
@@ -145,7 +146,6 @@
   Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br>
   Essa aplicação não possui vínculo com a ANVISA e não substitui o Bulário Eletrônico.
 </footer>
-
 
 <script>
 function mostrarAba(id) {
