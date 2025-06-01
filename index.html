@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Monitoramento de Medicamentos de Referência - ANVISA</title>
+  <title>DBulário - Monitoramento Bulário Eletrônico ANVISA</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <style>
@@ -18,14 +18,6 @@
       color: white;
       padding: 2rem;
       text-align: center;
-      background-image: url('https://www.gov.br/anvisa/pt-br/@@site-logo/anvisa.png');
-      background-repeat: no-repeat;
-      background-position: 2rem center;
-      background-size: 100px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
     }
     nav {
       background-color: #0055a5;
@@ -50,18 +42,6 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    h2 {
-      color: #003366;
-    }
-    input {
-      padding: 0.5rem;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      width: 100%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -75,71 +55,52 @@
     th {
       background-color: #e8f1fa;
     }
-    .alerta {
-      color: #a94442;
-      background-color: #f2dede;
-      padding: 1rem;
-      border-radius: 5px;
-      margin-top: 1rem;
-    }
     .hidden {
       display: none;
     }
-    footer {
-      background-color: #003366;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
+    .botoes a {
+      margin-right: 1rem;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-
 <header>
-  <h1 style="display: inline-block; vertical-align: middle; margin: 0;">DBulário - Monitoramento de Medicamentos de Referência</h1>
+  <h1>DBulário - Monitoramento de Medicamentos</h1>
 </header>
 
 <nav>
-  <a href="#" onclick="mostrarAba('inicio')">Página Inicial</a>
-  <a href="#" onclick="mostrarAba('listaA')"> Lista A - Referências ANVISA</a>
+  <a href="#" onclick="mostrarAba('inicio')">Início</a>
   <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
 </nav>
 
 <div class="container">
   <div id="inicio">
     <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;">
-    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização das bulas dos medicamentos de referência junto ao Bulário Eletrônico.</p>
-    <p>Nesta ferramenta, é possível consultar todos medicamentos listados no Bulário Eletrônico e suas respectivas atualizações, facilitando o controle regulatório.</p>
 
-      <li><strong>E-mail:</strong> <a href="mailto:diorger@gmail.com">diorger@gmail.com</a></li>
-      <li><strong>GitHub:</strong> <a href="https://github.com/diorgerb" target="_blank">github.com/diorger</a></li>
-    </ul>
-  </div>
-
-  <div id="listaA" class="hidden">
-    <h2>Lista de Medicamentos de Referência ANVISA</h2>
-    <p><strong>Aviso:</strong> Esta listagem é baseada na <a href="https://www.gov.br/anvisa/pt-br/setorregulado/regularizacao/medicamentos/medicamentos-de-referencia/lista-de-medicamentos-de-referencia" target="_blank">"Lista A: medicamentos que contenham um único insumo farmacêutico ativo"</a>.  <br>
-    <p> Pode haver divergências ou registros obsoletos devido à periodicidade de atualização e eventuais transferências de titularidade no arquivo disponibilizado pela ANVISA. 
-    <p> Para consultar medicamentos com mais de um princípio ativo, acesse a aba de "Lista personalizada".</p>
-    <input type="text" id="filtroListaA" placeholder="Digite os números de registro Ex:101070234,112600199">
-    <div class="alerta" id="avisoListaA"></div>
-    <table id="tabelaListaA"></table>
+    <h2>Bem-vindo ao DBulário</h2>
+    <p>Este projeto visa facilitar o acompanhamento das bulas dos medicamentos junto ao Bulário eletrônico da ANVISA.</p>
+    <p>Se tiver interesse em contato comercial ou contribuir com o projeto, envie um e-mail para <a href="mailto:diorger@gmail.com">diorger@gmail.com</a>.</p>
   </div>
 
   <div id="listaPersonalizada" class="hidden">
-    <h2>Lista de Referência Personalizada (Bulário Eletrônico)</h2>
-    <input type="text" id="filtroPersonalizada" placeholder="Digite os números de registro. Ex:101070234,112600199">
-    <div class="alerta" id="avisoPersonalizada"></div>
+    <h2>Lista de Referência Personalizada</h2>
+    <p><strong>Filtro:</strong> digite os termos separados por vírgula (ex: 101070234,101070234) e selecione a coluna que deseja aplicar o filtro.</p>
+    <input type="text" id="filtroTexto" placeholder="Digite os termos de busca">
+    <div>
+      <label><input type="checkbox" class="colunaFiltro" value="Detentor do registro" checked> Detentor</label>
+      <label><input type="checkbox" class="colunaFiltro" value="cnpj" checked> CNPJ</label>
+      <label><input type="checkbox" class="colunaFiltro" value="Produto" checked> Produto</label>
+      <label><input type="checkbox" class="colunaFiltro" value="Registro" checked> Registro</label>
+    </div>
     <table id="tabelaPersonalizada"></table>
+    <div id="detalhes" class="hidden"></div>
   </div>
 </div>
-
-<footer>
-  &copy; 2025 - DBulário | Desenvolvido por Diórger Bretas Chaves. <br>
-  Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br>
-  Essa aplicação não possui vínculo com a ANVISA e não substitui o Bulário Eletrônico.
-</footer>
 
 <script>
 function mostrarAba(id) {
@@ -154,64 +115,75 @@ function carregarCSV(caminho, callback) {
       Papa.parse(csv, {
         header: true,
         skipEmptyLines: true,
-        complete: function(results) {
-          callback(results.data);
-        }
+        complete: results => callback(results.data)
       });
     });
 }
 
-function filtrarPorRegistro(data, registrosInput) {
-  const registros = registrosInput.split(',').map(r => r.trim());
-  const encontrados = [];
-  const naoEncontrados = [];
-  const filtrados = data.filter(row => {
-    if (registros.includes(row[Object.keys(row)[3]])) {
-      encontrados.push(row[Object.keys(row)[3]]);
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  registros.forEach(r => {
-    if (!encontrados.includes(r)) naoEncontrados.push(r);
-  });
-
-  return { filtrados: filtrados.length > 0 ? filtrados : data, naoEncontrados };
-}
-
-function montarTabela(elementoId, dados) {
-  const tabela = document.getElementById(elementoId);
+function montarTabela(dados) {
+  const tabela = document.getElementById('tabelaPersonalizada');
   tabela.innerHTML = '';
   if (dados.length === 0) return;
 
-  const cabecalho = Object.keys(dados[0]);
-  const thead = '<thead><tr>' + cabecalho.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
-  const tbody = '<tbody>' + dados.map(row => '<tr>' + cabecalho.map(col => `<td>${row[col]}</td>`).join('') + '</tr>').join('') + '</tbody>';
+  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Data Atualização Bulário'];
+  const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
+  const tbody = '<tbody>' + dados.map((row, i) =>
+    `<tr onclick="mostrarDetalhes(${i})">` +
+    colunas.map(col => `<td>${row[col]}</td>`).join('') +
+    '</tr>'
+  ).join('') + '</tbody>';
   tabela.innerHTML = thead + tbody;
 }
 
-carregarCSV('StatusBulasANVISA.csv', dados => {
-  document.getElementById('filtroPersonalizada').addEventListener('input', () => {
-    const { filtrados, naoEncontrados } = filtrarPorRegistro(dados, document.getElementById('filtroPersonalizada').value);
-    montarTabela('tabelaPersonalizada', filtrados);
-    const aviso = naoEncontrados.length > 0 ? `Os seguintes registros não constam no bulário eletrônico: ${naoEncontrados.join(', ')}` : '';
-    document.getElementById('avisoPersonalizada').innerText = aviso;
+function filtrarDados(dados, texto, colunasSelecionadas) {
+  if (!texto.trim()) return dados;
+  const termos = texto.split(',').map(t => t.trim().toLowerCase());
+  return dados.filter(row => {
+    return colunasSelecionadas.some(col =>
+      termos.some(termo => row[col] && row[col].toLowerCase().includes(termo))
+    );
   });
-  montarTabela('tabelaPersonalizada', dados);
-});
+}
 
-carregarCSV('tabela_lista_a_incluídos.csv', dados => {
-  document.getElementById('filtroListaA').addEventListener('input', () => {
-    const { filtrados, naoEncontrados } = filtrarPorRegistro(dados, document.getElementById('filtroListaA').value);
-    montarTabela('tabelaListaA', filtrados);
-    const aviso = naoEncontrados.length > 0 ? `Registros não encontrados na lista A: ${naoEncontrados.join(', ')}` : '';
-    document.getElementById('avisoListaA').innerText = aviso;
+let dadosGlobal = [];
+let detalhesDiv = document.getElementById('detalhes');
+
+function mostrarDetalhes(index) {
+  const dados = dadosGlobal[index];
+  const nome = dados['Produto'];
+  const data = dados['Data Atualização Bulário'];
+  const idPaciente = dados['idBulaPacienteProtegido'];
+  const idProfissional = dados['idBulaProfissionalProtegido'];
+
+  detalhesDiv.innerHTML = `
+    <h3>Detalhes de ${nome}</h3>
+    <p><strong>Atualizado em:</strong> ${data}</p>
+    <div class="botoes">
+      <p><strong>Versão Paciente:</strong></p>
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest" target="_blank"><button>Visualizar</button></a>
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest" download><button>Baixar</button></a>
+      <iframe src="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest"></iframe>
+      <p><strong>Versão Profissional:</strong></p>
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest" target="_blank"><button>Visualizar</button></a>
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest" download><button>Baixar</button></a>
+      <iframe src="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest"></iframe>
+    </div>
+  `;
+  detalhesDiv.classList.remove('hidden');
+}
+
+carregarCSV('StatusBulasANVISA.csv', dados => {
+  dadosGlobal = dados;
+  montarTabela(dados);
+
+  document.getElementById('filtroTexto').addEventListener('input', () => {
+    const texto = document.getElementById('filtroTexto').value;
+    const colunasSelecionadas = Array.from(document.querySelectorAll('.colunaFiltro:checked')).map(cb => cb.value);
+    const filtrados = filtrarDados(dadosGlobal, texto, colunasSelecionadas);
+    montarTabela(filtrados);
+    detalhesDiv.classList.add('hidden');
   });
-  montarTabela('tabelaListaA', dados);
 });
 </script>
-
 </body>
 </html>
