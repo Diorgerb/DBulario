@@ -164,17 +164,20 @@
   </p>
 
 </div>
-<div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif;">
-      <h2 style="text-align: center; margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
-  
-    <div class="filtros">
-      <label>Filtrar por número de registro (separe por vírgula):</label>
-      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321">
-    </div>
-    <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
-    <div class="alerta" id="avisoFiltro"></div>
-    <table id="tabelaPersonalizada"></table>
+<div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
+  <h2 style="margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
+
+  <div class="filtros">
+    <label>Filtrar por número de registro (separe por vírgula):</label><br>
+    <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;">
   </div>
+
+  <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
+  <div class="alerta" id="avisoFiltro"></div>
+
+  <table id="tabelaPersonalizada" style="margin: 20px auto;"></table>
+</div>
+
 
 <div class="modal-overlay" id="modalDetalhes">
   <div class="modal-content" id="detalhesProduto">
