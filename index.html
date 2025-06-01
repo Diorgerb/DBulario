@@ -159,6 +159,8 @@
       <label>Filtrar por número de registro (separe por vírgula):</label>
       <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321">
     </div>
+      <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
+    </div>
     <div class="alerta" id="avisoFiltro"></div>
     <table id="tabelaPersonalizada"></table>
   </div>
@@ -235,7 +237,63 @@ function aplicarFiltro(dados) {
   document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
   montarTabela(filtrado.length ? filtrado : []);
 }
+function downloadExcel(dados) {
+  if (!dados.length) {
+    alert('Nenhum dado para baixar.');
+    return;
+  }
 
+  // Escolher as colunas que serão exportadas
+  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Data Atualização Bulário'];
+
+  // Monta array com só as colunas escolhidas
+  const dadosParaExportar = dados.map(row => {
+    let obj = {};
+    colunas.forEach(col => obj[col] = row[col]);
+    return obj;
+  });
+
+  const csv = Papa.unparse(dadosParaExportar);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'medicamentos_filtrados.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Evento para botão
+document.getElementById('btnDownload').addEventListener('click', () => {
+  // Pega filtro atual
+  const texto = document.getElementById('filtroTexto').value.trim();
+  if (texto === '') {
+    // Sem filtro: baixa tudo
+    downloadExcel(dadosOriginal);
+    return;
+  }
+  const termos = texto.split(',').map(t => t.trim().toLowerCase());
+
+  const filtrado = dadosOriginal.filter(row =>
+    termos.some(termo =>
+      row['Registro']?.toLowerCase().includes(termo)
+    )
+  );
+
+  if (filtrado.length === 0) {
+    alert('Nenhum registro encontrado para baixar.');
+    return;
+  }
+
+  downloadExcel(filtrado);
+});
+
+
+
+
+  
 let dadosCSV = [];
 let dadosOriginal = [];
 
