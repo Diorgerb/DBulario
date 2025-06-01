@@ -245,7 +245,7 @@ function mostrarDetalhes(idx) {
 
   container.innerHTML = `
     <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
-    <h3>${produto['Produto']}</h3>
+    <h3>Detalhes do produto: ${produto['Produto']}</h3>
     <p><strong>Atualização:</strong> ${produto['Data Atualização Bulário']}</p>
     <div class="bula-links">
       <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
@@ -255,6 +255,12 @@ function mostrarDetalhes(idx) {
         <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Profissional
       </a>
     </div>
+      <div class="alerta" style="margin-top: 1rem;">
+      Caso ocorra erro ao acessar os arquivos, <a href="https://consultas.anvisa.gov.br/#/bulario/q/?numeroRegistro=${produto['Registro']}" target="_blank" style="color: #a94442; font-weight: bold;">clique aqui</a> para acessá-los diretamente no Bulário Eletrônico da ANVISA.
+    </div>
+
+
+    
   `;
 
   document.getElementById('modalDetalhes').style.display = 'flex';
