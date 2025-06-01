@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DBulário - Monitoramento de Bulas</title>
+  <title>DBulário - Monitoramento Bulário Eletrônico</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <style>
@@ -56,9 +56,6 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    .checkboxes label {
-      margin-right: 1rem;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -107,7 +104,7 @@
 <body>
 
 <header>
-  <h1>DBulário - Monitoramento de Medicamentos de Referência</h1>
+  <h1>DBulário - Monitoramento de medicamentos Bulário Eletrônico</h1>
 </header>
 
 <nav>
@@ -124,16 +121,11 @@
   </div>
 
   <div id="listaPersonalizada" style="display:none">
-    <h2>Lista de Referência Personalizada (Bulário Eletrônico)</h2>
+    <h2>Medicamentos Listados - Bulário Eletrônico)</h2>
     <div class="filtros">
-      <label>Filtrar por (separe por vírgula):</label>
-      <input type="text" id="filtroTexto" placeholder="Ex: EMS,ACHE,Medley">
-      <div class="checkboxes">
-        <label><input type="checkbox" class="colunaFiltro" value="Detentor do registro" checked> Detentor</label>
-        <label><input type="checkbox" class="colunaFiltro" value="Produto" checked> Produto</label>
-        <label><input type="checkbox" class="colunaFiltro" value="Registro"> Registro</label>
-      </div>
-      <small>Nota: digite termos separados por vírgula. O filtro busca correspondências exatas nas colunas selecionadas.</small>
+      <label>Filtrar por número de registro (separe por vírgula):</label>
+      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321">
+      <small>Nota: digite números completos ou parciais separados por vírgula. O filtro será aplicado apenas à coluna "Registro".</small>
     </div>
     <div class="alerta" id="avisoFiltro"></div>
     <table id="tabelaPersonalizada"></table>
@@ -187,17 +179,23 @@ function montarTabela(dados) {
 
 function aplicarFiltro(dados) {
   const texto = document.getElementById('filtroTexto').value.trim();
-  const colunasSelecionadas = Array.from(document.querySelectorAll('.colunaFiltro:checked')).map(c => c.value);
+
+  if (texto === '') {
+    document.getElementById('avisoFiltro').innerText = '';
+    montarTabela(dados);
+    return;
+  }
+
   const termos = texto.split(',').map(t => t.trim().toLowerCase());
 
-  const filtrado = dados.filter(row => {
-    return colunasSelecionadas.some(coluna =>
-      termos.some(termo => row[coluna]?.toLowerCase() === termo)
-    );
-  });
+  const filtrado = dados.filter(row =>
+    termos.some(termo =>
+      row['Registro']?.toLowerCase().includes(termo)
+    )
+  );
 
   document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
-  montarTabela(filtrado.length ? filtrado : dados);
+  montarTabela(filtrado.length ? filtrado : []);
 }
 
 let dadosCSV = [];
@@ -227,9 +225,6 @@ carregarCSV('StatusBulasANVISA.csv', dados => {
   montarTabela(dados);
 
   document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
-  document.querySelectorAll('.colunaFiltro').forEach(cb => {
-    cb.addEventListener('change', () => aplicarFiltro(dadosOriginal));
-  });
 });
 </script>
 </body>
