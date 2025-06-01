@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DBulário - Monitoramento Bulário Eletrônico ANVISA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBulário - Monitoramento de Bulas</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <style>
@@ -35,12 +35,29 @@
       text-decoration: underline;
     }
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 2rem auto;
       background: white;
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .filtros {
+      margin-bottom: 1.5rem;
+    }
+    .filtros label {
+      display: block;
+      margin: 0.5rem 0 0.25rem;
+    }
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .checkboxes label {
+      margin-right: 1rem;
     }
     table {
       width: 100%;
@@ -55,57 +72,85 @@
     th {
       background-color: #e8f1fa;
     }
-    .hidden {
+    .detalhes {
+      margin-top: 2rem;
+      background-color: #f9f9f9;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
       display: none;
     }
-    .botoes a {
-      margin-right: 1rem;
+    .detalhes h3 {
+      margin-top: 0;
     }
-    iframe {
-      width: 100%;
-      height: 600px;
+    .bula-links img {
+      width: 32px;
+      margin-right: 1rem;
+      vertical-align: middle;
+    }
+    .alerta {
+      color: #a94442;
+      background-color: #f2dede;
+      padding: 1rem;
+      border-radius: 5px;
       margin-top: 1rem;
+    }
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
     }
   </style>
 </head>
 <body>
+
 <header>
-  <h1>DBulário - Monitoramento de Medicamentos</h1>
+  <h1>DBulário - Monitoramento de Medicamentos de Referência</h1>
 </header>
 
 <nav>
-  <a href="#" onclick="mostrarAba('inicio')">Início</a>
+  <a href="#" onclick="mostrarAba('inicio')">Página Inicial</a>
   <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
 </nav>
 
 <div class="container">
   <div id="inicio">
     <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;">
-
-    <h2>Bem-vindo ao DBulário</h2>
-    <p>Este projeto visa facilitar o acompanhamento das bulas dos medicamentos junto ao Bulário eletrônico da ANVISA.</p>
-    <p>Se tiver interesse em contato comercial ou contribuir com o projeto, envie um e-mail para <a href="mailto:diorger@gmail.com">diorger@gmail.com</a>.</p>
+    <p>Esta plataforma foi desenvolvida com o objetivo de facilitar o acompanhamento de atualização das bulas dos medicamentos de referência junto ao Bulário Eletrônico.</p>
+    <p>Nesta ferramenta, é possível consultar todos medicamentos listados no Bulário Eletrônico e suas respectivas atualizações, facilitando o controle regulatório.</p>
+    <p><strong>Contato comercial ou contribuições:</strong> envie um e-mail para <a href="mailto:diorger@gmail.com">diorger@gmail.com</a> ou acesse <a href="https://github.com/diorgerb" target="_blank">github.com/diorgerb</a>.</p>
   </div>
 
-  <div id="listaPersonalizada" class="hidden">
-    <h2>Lista de Referência Personalizada</h2>
-    <p><strong>Filtro:</strong> digite os termos separados por vírgula (ex: 101070234,101070234) e selecione a coluna que deseja aplicar o filtro.</p>
-    <input type="text" id="filtroTexto" placeholder="Digite os termos de busca">
-    <div>
-      <label><input type="checkbox" class="colunaFiltro" value="Detentor do registro" checked> Detentor</label>
-      <label><input type="checkbox" class="colunaFiltro" value="cnpj" checked> CNPJ</label>
-      <label><input type="checkbox" class="colunaFiltro" value="Produto" checked> Produto</label>
-      <label><input type="checkbox" class="colunaFiltro" value="Registro" checked> Registro</label>
+  <div id="listaPersonalizada" style="display:none">
+    <h2>Lista de Referência Personalizada (Bulário Eletrônico)</h2>
+    <div class="filtros">
+      <label>Filtrar por (separe por vírgula):</label>
+      <input type="text" id="filtroTexto" placeholder="Ex: EMS,ACHE,Medley">
+      <div class="checkboxes">
+        <label><input type="checkbox" class="colunaFiltro" value="Detentor do registro" checked> Detentor</label>
+        <label><input type="checkbox" class="colunaFiltro" value="Produto" checked> Produto</label>
+        <label><input type="checkbox" class="colunaFiltro" value="Registro"> Registro</label>
+      </div>
+      <small>Nota: digite termos separados por vírgula. O filtro busca correspondências exatas nas colunas selecionadas.</small>
     </div>
+    <div class="alerta" id="avisoFiltro"></div>
     <table id="tabelaPersonalizada"></table>
-    <div id="detalhes" class="hidden"></div>
+    <div class="detalhes" id="detalhesProduto"></div>
   </div>
 </div>
 
+<footer>
+  &copy; 2025 - DBulário | Desenvolvido por Diórger Bretas Chaves. <br>
+  Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br>
+  Essa aplicação não possui vínculo com a ANVISA e não substitui o Bulário Eletrônico.
+</footer>
+
 <script>
 function mostrarAba(id) {
-  document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.container > div').forEach(div => div.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
 }
 
 function carregarCSV(caminho, callback) {
@@ -115,7 +160,9 @@ function carregarCSV(caminho, callback) {
       Papa.parse(csv, {
         header: true,
         skipEmptyLines: true,
-        complete: results => callback(results.data)
+        complete: function(results) {
+          callback(results.data);
+        }
       });
     });
 }
@@ -123,65 +170,65 @@ function carregarCSV(caminho, callback) {
 function montarTabela(dados) {
   const tabela = document.getElementById('tabelaPersonalizada');
   tabela.innerHTML = '';
-  if (dados.length === 0) return;
+
+  if (!dados.length) return;
 
   const colunas = ['Detentor do registro','cnpj','Produto','Registro','Data Atualização Bulário'];
   const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
-  const tbody = '<tbody>' + dados.map((row, i) =>
-    `<tr onclick="mostrarDetalhes(${i})">` +
-    colunas.map(col => `<td>${row[col]}</td>`).join('') +
-    '</tr>'
-  ).join('') + '</tbody>';
+  const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
+    colunas.map(col =>
+      col === 'Produto'
+        ? `<td><a href="#" onclick="mostrarDetalhes(${idx})">${row[col]}</a></td>`
+        : `<td>${row[col]}</td>`
+    ).join('') + '</tr>').join('') + '</tbody>';
+
   tabela.innerHTML = thead + tbody;
 }
 
-function filtrarDados(dados, texto, colunasSelecionadas) {
-  if (!texto.trim()) return dados;
+function aplicarFiltro(dados) {
+  const texto = document.getElementById('filtroTexto').value.trim();
+  const colunasSelecionadas = Array.from(document.querySelectorAll('.colunaFiltro:checked')).map(c => c.value);
   const termos = texto.split(',').map(t => t.trim().toLowerCase());
-  return dados.filter(row => {
-    return colunasSelecionadas.some(col =>
-      termos.some(termo => row[col] && row[col].toLowerCase().includes(termo))
+
+  const filtrado = dados.filter(row => {
+    return colunasSelecionadas.some(coluna =>
+      termos.some(termo => row[coluna]?.toLowerCase() === termo)
     );
   });
+
+  document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
+  montarTabela(filtrado.length ? filtrado : dados);
 }
 
-let dadosGlobal = [];
-let detalhesDiv = document.getElementById('detalhes');
+let dadosCSV = [];
+let dadosOriginal = [];
 
-function mostrarDetalhes(index) {
-  const dados = dadosGlobal[index];
-  const nome = dados['Produto'];
-  const data = dados['Data Atualização Bulário'];
-  const idPaciente = dados['idBulaPacienteProtegido'];
-  const idProfissional = dados['idBulaProfissionalProtegido'];
-
-  detalhesDiv.innerHTML = `
-    <h3>Detalhes de ${nome}</h3>
-    <p><strong>Atualizado em:</strong> ${data}</p>
-    <div class="botoes">
-      <p><strong>Versão Paciente:</strong></p>
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest" target="_blank"><button>Visualizar</button></a>
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest" download><button>Baixar</button></a>
-      <iframe src="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idPaciente}/?Authorization=Guest"></iframe>
-      <p><strong>Versão Profissional:</strong></p>
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest" target="_blank"><button>Visualizar</button></a>
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest" download><button>Baixar</button></a>
-      <iframe src="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${idProfissional}/?Authorization=Guest"></iframe>
+function mostrarDetalhes(idx) {
+  const produto = dadosCSV[idx];
+  const container = document.getElementById('detalhesProduto');
+  container.innerHTML = `
+    <h3>${produto['Produto']}</h3>
+    <p><strong>Atualização:</strong> ${produto['Data Atualização Bulário']}</p>
+    <div class="bula-links">
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
+        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="Paciente" title="Bula do Paciente" />
+      </a>
+      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaProfissionalProtegido}/?Authorization=Guest" target="_blank">
+        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="Profissional" title="Bula do Profissional" />
+      </a>
     </div>
   `;
-  detalhesDiv.classList.remove('hidden');
+  container.style.display = 'block';
 }
 
 carregarCSV('StatusBulasANVISA.csv', dados => {
-  dadosGlobal = dados;
+  dadosCSV = dados;
+  dadosOriginal = dados;
   montarTabela(dados);
 
-  document.getElementById('filtroTexto').addEventListener('input', () => {
-    const texto = document.getElementById('filtroTexto').value;
-    const colunasSelecionadas = Array.from(document.querySelectorAll('.colunaFiltro:checked')).map(cb => cb.value);
-    const filtrados = filtrarDados(dadosGlobal, texto, colunasSelecionadas);
-    montarTabela(filtrados);
-    detalhesDiv.classList.add('hidden');
+  document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
+  document.querySelectorAll('.colunaFiltro').forEach(cb => {
+    cb.addEventListener('change', () => aplicarFiltro(dadosOriginal));
   });
 });
 </script>
