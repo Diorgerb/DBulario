@@ -69,22 +69,6 @@
     th {
       background-color: #e8f1fa;
     }
-    .detalhes {
-      margin-top: 2rem;
-      background-color: #f9f9f9;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      display: none;
-    }
-    .detalhes h3 {
-      margin-top: 0;
-    }
-    .bula-links img {
-      width: 32px;
-      margin-right: 1rem;
-      vertical-align: middle;
-    }
     .alerta {
       color: #a94442;
       background-color: #f2dede;
@@ -98,6 +82,55 @@
       text-align: center;
       padding: 1rem;
       margin-top: 3rem;
+    }
+
+    /* Modal (detalhes sobreposto) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      position: relative;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.75rem;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+    }
+    .bula-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .bula-links a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #003366;
+    }
+    .bula-links img {
+      width: 24px;
+      margin-right: 0.5rem;
     }
   </style>
 </head>
@@ -121,7 +154,7 @@
   </div>
 
   <div id="listaPersonalizada" style="display:none">
-    <h2>Medicamentos Listados - Bulário Eletrônico)</h2>
+    <h2>Medicamentos Listados - Bulário Eletrônico</h2>
     <div class="filtros">
       <label>Filtrar por número de registro (separe por vírgula):</label>
       <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321">
@@ -129,7 +162,13 @@
     </div>
     <div class="alerta" id="avisoFiltro"></div>
     <table id="tabelaPersonalizada"></table>
-    <div class="detalhes" id="detalhesProduto"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalhes">
+  <div class="modal-content" id="detalhesProduto">
+    <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
+    <!-- Conteúdo injetado via JS -->
   </div>
 </div>
 
@@ -170,7 +209,7 @@ function montarTabela(dados) {
   const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
     colunas.map(col =>
       col === 'Produto'
-        ? `<td><a href="#" onclick="mostrarDetalhes(${idx})">${row[col]}</a></td>`
+        ? `<td><a href="#" onclick="mostrarDetalhes(${idx}); return false;">${row[col]}</a></td>`
         : `<td>${row[col]}</td>`
     ).join('') + '</tr>').join('') + '</tbody>';
 
@@ -204,19 +243,26 @@ let dadosOriginal = [];
 function mostrarDetalhes(idx) {
   const produto = dadosCSV[idx];
   const container = document.getElementById('detalhesProduto');
+
   container.innerHTML = `
+    <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
     <h3>${produto['Produto']}</h3>
     <p><strong>Atualização:</strong> ${produto['Data Atualização Bulário']}</p>
     <div class="bula-links">
       <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
-        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="Paciente" title="Bula do Paciente" />
+        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Paciente
       </a>
       <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaProfissionalProtegido}/?Authorization=Guest" target="_blank">
-        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="Profissional" title="Bula do Profissional" />
+        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Profissional
       </a>
     </div>
   `;
-  container.style.display = 'block';
+
+  document.getElementById('modalDetalhes').style.display = 'flex';
+}
+
+function fecharDetalhes() {
+  document.getElementById('modalDetalhes').style.display = 'none';
 }
 
 carregarCSV('StatusBulasANVISA.csv', dados => {
@@ -227,5 +273,6 @@ carregarCSV('StatusBulasANVISA.csv', dados => {
   document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
 });
 </script>
+
 </body>
 </html>
