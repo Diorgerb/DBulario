@@ -354,7 +354,12 @@ function mostrarDetalhes(idx) {
   container.innerHTML = `
     <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
     <h3>Detalhes do produto: ${produto['Produto']}</h3>
-    <p><strong>Atualização:</strong> ${produto['Data Atualização Bulário']}</p>
+    
+    <p><strong>N° Registro:</strong> ${produto['Registro']}</p>
+    <p><strong>N° Processo:</strong> ${produto['Processo']}</p>
+    <p><strong>Data atualização da Bula:</strong> ${produto['Data Atualização Bulário']}</p>
+    <p><strong>Data atualização na Plataforma:</strong> ${produto['Inclusão na Plataforma']}</p>
+
     <div class="bula-links">
       <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
         <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Paciente
@@ -366,7 +371,6 @@ function mostrarDetalhes(idx) {
       <div class="alerta" style="margin-top: 1rem;">
       Caso ocorra erro ao acessar os arquivos, <a href="https://consultas.anvisa.gov.br/#/bulario/q/?numeroRegistro=${produto['Registro']}" target="_blank" style="color: #a94442; font-weight: bold;">clique aqui</a> para acessá-los diretamente no Bulário Eletrônico da ANVISA.
     </div>
-
 
     
   `;
