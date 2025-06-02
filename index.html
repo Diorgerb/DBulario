@@ -192,7 +192,7 @@
       <p style="font-size: 1.1rem; line-height: 1.6;">
         A plataforma atual que você está utilizando funciona como uma demonstração (demo) e uma alternativa para acompanhamento básico.   </p>
       <p style="font-size: 1.1rem; line-height: 1.6;">
-        As mpresas podem estabelecer listas de produtos para receberem alertas via e-mail sempre que as bulas desses medicamentos forem atualizadas.
+        As empresas podem estabelecer listas de produtos para receberem alertas via e-mail sempre que as bulas desses medicamentos forem atualizadas.
       </p>
      
       <p style="margin-top: 2rem; text-align: center;">
@@ -255,7 +255,7 @@ function montarTabela(dados) {
 
   if (!dados.length) return;
 
-  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Data Atualização Bulário'];
+  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Processo','Data Atualização Bulário','Inclusão na Plataforma'];
   const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
   const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
     colunas.map(col =>
@@ -294,7 +294,7 @@ function downloadExcel(dados) {
   }
 
   // Escolher as colunas que serão exportadas
-  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Data Atualização Bulário'];
+  const colunas = ['Detentor do registro','cnpj','Produto','Registro','Processo','Data Atualização Bulário','Inclusão na Plataforma'];
 
   // Monta array com só as colunas escolhidas
   const dadosParaExportar = dados.map(row => {
