@@ -42,6 +42,16 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
+    /* Ocultar todas as seções por padrão */
+    .container > div {
+      display: none;
+    }
+    /* Exibir somente a seção "inicio" ao carregar */
+    #inicio {
+      display: block;
+    }
+
     .filtros {
       margin-bottom: 1.5rem;
     }
@@ -84,7 +94,6 @@
       margin-top: 3rem;
     }
 
-    /* Modal (detalhes sobreposto) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -145,84 +154,72 @@
   <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
   <a href="#" onclick="mostrarAba('notificacoesAlertas')">Notificações / Alertas</a>
   <a href="#" onclick="mostrarAba('contato')">Fale Conosco</a>
-
 </nav>
 
 <div class="container">
- <div id="inicio">
-  <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;">
-
-  <p style="font-size: 1.1rem; line-height: 1.6;">
-  A plataforma <strong>DBulário</strong> foi desenvolvida para otimizar o monitoramento das atualizações de bulas de medicamentos publicadas no Bulário Eletrônico da ANVISA.</p>
-  <p style="font-size: 1.1rem; line-height: 1.6;">
-  Seu principal objetivo é facilitar o acesso rápido e estruturado às informações regulatórias, promovendo mais agilidade, rastreabilidade e segurança para profissionais e empresas que atuam na área de Assuntos Regulatórios.</p>
-  
-  <p style="text-align: center;">
-    <a href="ApresentacaoDBulario.pdf" target="_blank" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">📄 Ver Apresentação da Plataforma</a>
-  </p>
-
-</div>
-<div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
-  <h2 style="margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
-
-  <div class="filtros">
-    <label>Filtrar por número de registro (separe por vírgula):</label><br>
-    <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;">
+  <div id="inicio">
+    <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;">
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      A plataforma <strong>DBulário</strong> foi desenvolvida para otimizar o monitoramento das atualizações de bulas de medicamentos publicadas no Bulário Eletrônico da ANVISA.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      Seu principal objetivo é facilitar o acesso rápido e estruturado às informações regulatórias, promovendo mais agilidade, rastreabilidade e segurança para profissionais e empresas que atuam na área de Assuntos Regulatórios.
+    </p>
+    <p style="text-align: center;">
+      <a href="ApresentacaoDBulario.pdf" target="_blank" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+        📄 Ver Apresentação da Plataforma
+      </a>
+    </p>
   </div>
 
-  <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
-  <div class="alerta" id="avisoFiltro"></div>
-
-  <table id="tabelaPersonalizada" style="margin: 0 auto;"></table>
-</div>
-
-
-<div class="modal-overlay" id="modalDetalhes">
-  <div class="modal-content" id="detalhesProduto">
-    <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
-    <!-- Conteúdo injetado via JS -->
+  <div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
+    <h2 style="margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
+    <div class="filtros">
+      <label>Filtrar por número de registro (separe por vírgula):</label><br>
+      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;">
+    </div>
+    <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
+    <div class="alerta" id="avisoFiltro"></div>
+    <table id="tabelaPersonalizada" style="margin: 0 auto;"></table>
   </div>
-</div>
+
+  <div class="modal-overlay" id="modalDetalhes">
+    <div class="modal-content" id="detalhesProduto">
+      <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
+    </div>
+  </div>
 
   <div id="notificacoesAlertas" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif;">
-      <h2 style="text-align: center; margin-bottom: 1.5rem;">📨 Notificações / Alertas</h2>
-    
-      <p style="font-size: 1.1rem; line-height: 1.6;">
-        Este serviço está disponível para contratação por empresas ou profissionais independentes.   </p>
-      <p style="font-size: 1.1rem; line-height: 1.6;">
-        A plataforma atual que você está utilizando funciona como uma demonstração (demo) e uma alternativa para acompanhamento básico.   </p>
-      <p style="font-size: 1.1rem; line-height: 1.6;">
-        As mpresas podem estabelecer listas de produtos para receberem alertas via e-mail sempre que as bulas desses medicamentos forem atualizadas.
-      </p>
-     
-      <p style="margin-top: 2rem; text-align: center;">
-        📌 <strong>Se tiver interesse em contratar este serviço, entre em contato.</strong>.
-      </p>
-    </div>
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">📨 Notificações / Alertas</h2>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      Este serviço está disponível para contratação por empresas ou profissionais independentes.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      A plataforma atual que você está utilizando funciona como uma demonstração (demo) e uma alternativa para acompanhamento básico.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      As empresas podem estabelecer listas de produtos para receberem alertas via e-mail sempre que as bulas desses medicamentos forem atualizadas.
+    </p>
+    <p style="margin-top: 2rem; text-align: center;">
+      📌 <strong>Se tiver interesse em contratar este serviço, entre em contato.</strong>
+    </p>
+  </div>
 
-  
-  
   <div id="contato" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif;">
-      <h2 style="text-align: center; margin-bottom: 1.5rem;">📬 Fale Conosco</h2>
-    
-      <p style="font-size: 1.1rem; line-height: 1.6;">
-        Se você deseja entrar em contato para dúvidas, sugestões, parcerias ou assuntos comerciais, utilize os canais abaixo. Ficaremos felizes em conversar com você!
-      </p>
-    
-      <ul style="list-style: none; padding: 0; font-size: 1.1rem; line-height: 2;">
-        <li><strong>Email:</strong> <a href="mailto:diorger@gmail.com">diorger@gmail.com</a></li>
-        <li><strong>LinkedIn:</strong> <a href="www.linkedin.com/in/diorgerbretas" target="_blank">linkedin.com/in/diorgerbretas</a></li>
-      </ul>
-   
-      <p style="margin-top: 2rem; text-align: center;">
-        📌 <strong>Tempo médio de resposta:</strong> até 2 dias úteis.
-      </p>
-    </div>
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">📬 Fale Conosco</h2>
+    <p style="font-size: 1.1rem; line-height: 1.6;">
+      Se você deseja entrar em contato para dúvidas, sugestões, parcerias ou assuntos comerciais, utilize os canais abaixo. Ficaremos felizes em conversar com você!
+    </p>
+    <ul style="list-style: none; padding: 0; font-size: 1.1rem; line-height: 2;">
+      <li><strong>Email:</strong> <a href="mailto:diorger@gmail.com">diorger@gmail.com</a></li>
+      <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/diorgerbretas" target="_blank">linkedin.com/in/diorgerbretas</a></li>
+    </ul>
+    <p style="margin-top: 2rem; text-align: center;">
+      📌 <strong>Tempo médio de resposta:</strong> até 2 dias úteis.
+    </p>
+  </div>
+</div>
 
-
-
-
-  
 <footer>
   &copy; 2025 - DBulário <br>
   Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br>
@@ -230,165 +227,148 @@
 </footer>
 
 <script>
-function mostrarAba(id) {
-  document.querySelectorAll('.container > div').forEach(div => div.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
-}
-
-function carregarCSV(caminho, callback) {
-  fetch(caminho)
-    .then(response => response.text())
-    .then(csv => {
-      Papa.parse(csv, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          callback(results.data);
-        }
-      });
+  function mostrarAba(id) {
+    document.querySelectorAll('.container > div').forEach(div => {
+      div.style.display = 'none';
     });
-}
-
-function montarTabela(dados) {
-  const tabela = document.getElementById('tabelaPersonalizada');
-  tabela.innerHTML = '';
-
-  if (!dados.length) return;
-
-  const colunas = ['Detentor do registro','Produto','Registro','Data Atualização Bulário'];
-  const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
-  const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
-    colunas.map(col =>
-      col === 'Produto'
-        ? `<td><a href="#" onclick="mostrarDetalhes(${idx}); return false;">${row[col]}</a></td>`
-        : `<td>${row[col]}</td>`
-    ).join('') + '</tr>').join('') + '</tbody>';
-
-  tabela.innerHTML = thead + tbody;
-}
-
-function aplicarFiltro(dados) {
-  const texto = document.getElementById('filtroTexto').value.trim();
-
-  if (texto === '') {
-    document.getElementById('avisoFiltro').innerText = '';
-    montarTabela(dados);
-    return;
+    document.getElementById(id).style.display = 'block';
   }
 
-  const termos = texto.split(',').map(t => t.trim().toLowerCase());
-
-  const filtrado = dados.filter(row =>
-    termos.some(termo =>
-      row['Registro']?.toLowerCase().includes(termo)
-    )
-  );
-
-  document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
-  montarTabela(filtrado.length ? filtrado : []);
-}
-function downloadExcel(dados) {
-  if (!dados.length) {
-    alert('Nenhum dado para baixar.');
-    return;
+  function carregarCSV(caminho, callback) {
+    fetch(caminho)
+      .then(response => response.text())
+      .then(csv => {
+        Papa.parse(csv, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            callback(results.data);
+          }
+        });
+      });
   }
 
-  // Escolher as colunas que serão exportadas
-  const colunas = ['Detentor do registro','cnpj','Produto', 'Registro','Processo', 'Data Atualização Bulário','Inclusão na Plataforma'];
+  function montarTabela(dados) {
+    const tabela = document.getElementById('tabelaPersonalizada');
+    tabela.innerHTML = '';
+    if (!dados.length) return;
 
-  // Monta array com só as colunas escolhidas
-  const dadosParaExportar = dados.map(row => {
-    let obj = {};
-    colunas.forEach(col => obj[col] = row[col]);
-    return obj;
+    const colunas = ['Detentor do registro','Produto','Registro','Data Atualização Bulário'];
+    const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
+    const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
+      colunas.map(col =>
+        col === 'Produto'
+          ? `<td><a href="#" onclick="mostrarDetalhes(${idx}); return false;">${row[col]}</a></td>`
+          : `<td>${row[col]}</td>`
+      ).join('') + '</tr>').join('') + '</tbody>';
+
+    tabela.innerHTML = thead + tbody;
+  }
+
+  function aplicarFiltro(dados) {
+    const texto = document.getElementById('filtroTexto').value.trim();
+    if (texto === '') {
+      document.getElementById('avisoFiltro').innerText = '';
+      montarTabela(dados);
+      return;
+    }
+    const termos = texto.split(',').map(t => t.trim().toLowerCase());
+    const filtrado = dados.filter(row =>
+      termos.some(termo =>
+        row['Registro']?.toLowerCase().includes(termo)
+      )
+    );
+    document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
+    montarTabela(filtrado.length ? filtrado : []);
+  }
+
+  function downloadExcel(dados) {
+    if (!dados.length) {
+      alert('Nenhum dado para baixar.');
+      return;
+    }
+    const colunas = ['Detentor do registro','cnpj','Produto', 'Registro','Processo', 'Data Atualização Bulário','Inclusão na Plataforma'];
+    const dadosParaExportar = dados.map(row => {
+      let obj = {};
+      colunas.forEach(col => obj[col] = row[col]);
+      return obj;
+    });
+
+    const csv = Papa.unparse(dadosParaExportar);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'medicamentos_filtrados.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('btnDownload').addEventListener('click', () => {
+    const texto = document.getElementById('filtroTexto').value.trim();
+    if (texto === '') {
+      downloadExcel(dadosOriginal);
+      return;
+    }
+    const termos = texto.split(',').map(t => t.trim().toLowerCase());
+    const filtrado = dadosOriginal.filter(row =>
+      termos.some(termo =>
+        row['Registro']?.toLowerCase().includes(termo)
+      )
+    );
+    if (filtrado.length === 0) {
+      alert('Nenhum registro encontrado para baixar.');
+      return;
+    }
+    downloadExcel(filtrado);
   });
 
-  const csv = Papa.unparse(dadosParaExportar);
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'medicamentos_filtrados.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+  let dadosCSV = [];
+  let dadosOriginal = [];
 
-// Evento para botão
-document.getElementById('btnDownload').addEventListener('click', () => {
-  // Pega filtro atual
-  const texto = document.getElementById('filtroTexto').value.trim();
-  if (texto === '') {
-    // Sem filtro: baixa tudo
-    downloadExcel(dadosOriginal);
-    return;
-  }
-  const termos = texto.split(',').map(t => t.trim().toLowerCase());
-
-  const filtrado = dadosOriginal.filter(row =>
-    termos.some(termo =>
-      row['Registro']?.toLowerCase().includes(termo)
-    )
-  );
-
-  if (filtrado.length === 0) {
-    alert('Nenhum registro encontrado para baixar.');
-    return;
-  }
-
-  downloadExcel(filtrado);
-});
-
-
-
-
-  
-let dadosCSV = [];
-let dadosOriginal = [];
-
-function mostrarDetalhes(idx) {
-  const produto = dadosCSV[idx];
-  const container = document.getElementById('detalhesProduto');
-
-  container.innerHTML = `
-    <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
-    <h3>Detalhes do produto: ${produto['Produto']}</h3>
-    
-    <p><strong>N° Registro:</strong> ${produto['Registro']}</p>
-    <p><strong>N° Processo:</strong> ${produto['Processo']}</p>
-    <p><strong>Data atualização da Bula:</strong> ${produto['Data Atualização Bulário']}</p>
-    <p><strong>Data atualização na Plataforma:</strong> ${produto['Inclusão na Plataforma']}</p>
-
-    <div class="bula-links">
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
-        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Paciente
-      </a>
-      <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaProfissionalProtegido}/?Authorization=Guest" target="_blank">
-        <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Profissional
-      </a>
-    </div>
+  function mostrarDetalhes(idx) {
+    const produto = dadosCSV[idx];
+    const container = document.getElementById('detalhesProduto');
+    container.innerHTML = `
+      <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
+      <h3>Detalhes do produto: ${produto['Produto']}</h3>
+      <p><strong>N° Registro:</strong> ${produto['Registro']}</p>
+      <p><strong>N° Processo:</strong> ${produto['Processo']}</p>
+      <p><strong>Data atualização da Bula:</strong> ${produto['Data Atualização Bulário']}</p>
+      <p><strong>Data atualização na Plataforma:</strong> ${produto['Inclusão na Plataforma']}</p>
+      <div class="bula-links">
+        <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
+          <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Paciente
+        </a>
+        <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaProfissionalProtegido}/?Authorization=Guest" target="_blank">
+          <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Profissional
+        </a>
+      </div>
       <div class="alerta" style="margin-top: 1rem;">
-      Caso ocorra erro ao acessar os arquivos, <a href="https://consultas.anvisa.gov.br/#/bulario/q/?numeroRegistro=${produto['Registro']}" target="_blank" style="color: #a94442; font-weight: bold;">clique aqui</a> para acessá-los diretamente no Bulário Eletrônico da ANVISA.
-    </div>
+        Caso ocorra erro ao acessar os arquivos, <a href="https://consultas.anvisa.gov.br/#/bulario/q/?numeroRegistro=${produto['Registro']}" target="_blank" style="color: #a94442; font-weight: bold;">clique aqui</a> para acessá-los diretamente no Bulário Eletrônico da ANVISA.
+      </div>
+    `;
+    document.getElementById('modalDetalhes').style.display = 'flex';
+  }
 
-    
-  `;
+  function fecharDetalhes() {
+    document.getElementById('modalDetalhes').style.display = 'none';
+  }
 
-  document.getElementById('modalDetalhes').style.display = 'flex';
-}
+  document.getElementById('modalDetalhes').addEventListener('click', function(e) {
+    if (e.target === this) {
+      fecharDetalhes();
+    }
+  });
 
-function fecharDetalhes() {
-  document.getElementById('modalDetalhes').style.display = 'none';
-}
-
-carregarCSV('StatusBulasANVISA.csv', dados => {
-  dadosCSV = dados;
-  dadosOriginal = dados;
-  montarTabela(dados);
-
-  document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
-});
+  carregarCSV('StatusBulasANVISA.csv', dados => {
+    dadosCSV = dados;
+    dadosOriginal = dados;
+    montarTabela(dados);
+    document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
+  });
 </script>
 
 </body>
