@@ -19,6 +19,11 @@
       padding: 2rem;
       text-align: center;
     }
+    header div {
+      margin-top: 0.5rem;
+      font-size: 14px;
+      color: #b0c4de;
+    }
     nav {
       background-color: #0055a5;
       display: flex;
@@ -70,6 +75,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
     }
     .filtros-rapidos button {
       padding: 0.4rem 1rem;
@@ -91,6 +97,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       text-align: center;
+      margin: 0 auto;
+      display: block;
     }
     table {
       width: 100%;
@@ -103,7 +111,9 @@
       text-align: left;
     }
     th {
-      background-color: #e8f1fa;
+      background-color: #0055a5;
+      color: white;
+      font-weight: 700;
     }
     .alerta {
       color: #a94442;
@@ -111,6 +121,8 @@
       padding: 1rem;
       border-radius: 5px;
       margin-top: 1rem;
+      text-align: center;
+      font-weight: 600;
     }
     footer {
       background-color: #003366;
@@ -166,16 +178,40 @@
       width: 24px;
       margin-right: 0.5rem;
     }
+    /* Paginação */
+    .paginacao {
+      margin-top: 1rem;
+      text-align: center;
+      user-select: none;
+    }
+    .paginacao button {
+      background-color: #0055a5;
+      border: none;
+      color: white;
+      padding: 0.5rem 0.9rem;
+      margin: 0 0.15rem;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .paginacao button:hover:not(:disabled) {
+      background-color: #003f7d;
+    }
+    .paginacao button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
   </style>
 </head>
 <body>
 
 <header>
   <h1>DBulário - Monitoramento Bulário Eletrônico</h1>
-      <div >
-      <strong>ℹ️ Aviso:</strong> Esta base é atualizada automaticamente por um sistema independente a partir dos dados públicos do 
-      <a href="https://consultas.anvisa.gov.br/" target="_blank" style="color:#0055a5;">Consultas Anvisa</a>.
-    </div>
+  <div>
+    <strong>ℹ️ Aviso:</strong> Esta base é atualizada automaticamente por um sistema independente a partir dos dados públicos do 
+    <a href="https://consultas.anvisa.gov.br/" target="_blank" style="color:#b0c4de;">Consultas Anvisa</a>.
+  </div>
 </header>
 
 <nav>
@@ -195,21 +231,22 @@
     </p>
   </div>
 
-  <div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
-
+  <div id="listaPersonalizada" style="max-width: 900px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
     <h2 style="margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
     <div class="filtros">
       <div class="filtros-rapidos">
         <button onclick="filtrarPorPeriodo(0)">Hoje</button>
         <button onclick="filtrarPorPeriodo(3)">Últimos 3 dias</button>
         <button onclick="filtrarPorPeriodo(7)">Últimos 7 dias</button>
+        <button onclick="mostrarTodos()">Mostrar Todos</button>
       </div>
       <label>Filtrar por número de registro (separe por vírgula):</label><br />
-      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;" />
+      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" />
     </div>
     <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
-    <div class="alerta" id="avisoFiltro"></div>
+    <div class="alerta" id="avisoFiltro" style="display:none;"></div>
     <table id="tabelaPersonalizada" style="margin: 0 auto;"></table>
+    <div class="paginacao" id="paginacao"></div>
   </div>
 
   <div class="modal-overlay" id="modalDetalhes">
@@ -249,6 +286,11 @@
 </script>
 
 <script>
+  let dadosOriginal = [];
+  let dadosFiltrados = [];
+  let paginaAtual = 1;
+  const registrosPorPagina = 50;
+
   function carregarCSV(caminho, callback) {
     fetch(caminho)
       .then(response => response.text())
@@ -265,47 +307,120 @@
 
   function montarTabela(dados) {
     const tabela = document.getElementById('tabelaPersonalizada');
+    const avisoFiltro = document.getElementById('avisoFiltro');
+
     tabela.innerHTML = '';
-    if (!dados.length) return;
+
+    if (!dados.length) {
+      avisoFiltro.style.display = 'block';
+      avisoFiltro.innerText = 'Nenhum registro encontrado para os filtros aplicados.';
+      tabela.style.display = 'none';
+      document.getElementById('paginacao').style.display = 'none';
+      return;
+    } else {
+      avisoFiltro.style.display = 'none';
+      tabela.style.display = 'table';
+      document.getElementById('paginacao').style.display = 'block';
+    }
 
     const colunas = ['Detentor do registro','Produto','Registro','Data Atualização Bulário'];
+
+    // Paginação: dados da página atual
+    const inicio = (paginaAtual - 1) * registrosPorPagina;
+    const fim = inicio + registrosPorPagina;
+    const dadosPagina = dados.slice(inicio, fim);
+
     const thead = '<thead><tr>' + colunas.map(col => `<th>${col}</th>`).join('') + '</tr></thead>';
-    const tbody = '<tbody>' + dados.map((row, idx) => '<tr>' +
+    const tbody = '<tbody>' + dadosPagina.map((row, idx) => '<tr>' +
       colunas.map(col =>
         col === 'Produto'
-          ? `<td><a href="#" onclick="mostrarDetalhes(${idx}); return false;">${row[col]}</a></td>`
+          ? `<td><a href="#" onclick="mostrarDetalhes(${inicio + idx}); return false;">${row[col]}</a></td>`
           : `<td>${row[col]}</td>`
       ).join('') + '</tr>').join('') + '</tbody>';
 
     tabela.innerHTML = thead + tbody;
+
+    montarPaginacao(dados.length);
+  }
+
+  function montarPaginacao(totalRegistros) {
+    const paginacao = document.getElementById('paginacao');
+    paginacao.innerHTML = '';
+
+    const totalPaginas = Math.ceil(totalRegistros / registrosPorPagina);
+    if(totalPaginas <= 1) {
+      paginacao.style.display = 'none';
+      return;
+    }
+    paginacao.style.display = 'block';
+
+    const btnAnterior = document.createElement('button');
+    btnAnterior.textContent = '← Anterior';
+    btnAnterior.disabled = paginaAtual === 1;
+    btnAnterior.onclick = () => {
+      if (paginaAtual > 1) {
+        paginaAtual--;
+        montarTabela(dadosFiltrados);
+      }
+    };
+    paginacao.appendChild(btnAnterior);
+
+    const maxPaginasVisiveis = 5;
+    let startPage = Math.max(1, paginaAtual - Math.floor(maxPaginasVisiveis / 2));
+    let endPage = Math.min(totalPaginas, startPage + maxPaginasVisiveis - 1);
+    if (endPage - startPage < maxPaginasVisiveis - 1) {
+      startPage = Math.max(1, endPage - maxPaginasVisiveis + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      if (i === paginaAtual) {
+        btn.disabled = true;
+        btn.style.backgroundColor = '#003f7d';
+      }
+      btn.onclick = () => {
+        paginaAtual = i;
+        montarTabela(dadosFiltrados);
+      };
+      paginacao.appendChild(btn);
+    }
+
+    const btnProximo = document.createElement('button');
+    btnProximo.textContent = 'Próximo →';
+    btnProximo.disabled = paginaAtual === totalPaginas;
+    btnProximo.onclick = () => {
+      if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        montarTabela(dadosFiltrados);
+      }
+    };
+    paginacao.appendChild(btnProximo);
   }
 
   function aplicarFiltro(dados) {
     const texto = document.getElementById('filtroTexto').value.trim().toLowerCase();
     if (texto === '') {
-      document.getElementById('avisoFiltro').innerText = '';
-      montarTabela(dados);
+      dadosFiltrados = dados.slice();
+      paginaAtual = 1;
+      montarTabela(dadosFiltrados);
       return;
     }
     const termosFiltro = texto.split(',').map(t => t.trim());
 
-    // Para cada linha, verificar se algum registro nela (separado por vírgula) corresponde a algum termo do filtro
-    const filtrado = dados.filter(row => {
+    dadosFiltrados = dados.filter(row => {
       if (!row['Registro']) return false;
-
-      // Extrair registros separados por vírgula da célula
       const registrosLinha = row['Registro'].toLowerCase().split(',').map(r => r.trim());
-      // Verificar se algum registro da linha bate com algum termo do filtro
       return termosFiltro.some(filtro => registrosLinha.includes(filtro));
     });
 
-    document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
-    montarTabela(filtrado.length ? filtrado : []);
+    paginaAtual = 1;
+    montarTabela(dadosFiltrados);
   }
 
   function filtrarPorPeriodo(dias) {
     const hoje = new Date();
-    const dadosFiltrados = dadosOriginal.filter(row => {
+    dadosFiltrados = dadosOriginal.filter(row => {
       if (!row['Data Atualização Bulário']) return false;
       const partes = row['Data Atualização Bulário'].split('/');
       if (partes.length !== 3) return false;
@@ -313,10 +428,15 @@
       const diffDias = (hoje - data) / (1000 * 60 * 60 * 24);
       return diffDias <= dias;
     });
-
-    // Atualiza a tabela e limpa filtro de texto para não confundir o usuário
     document.getElementById('filtroTexto').value = '';
-    document.getElementById('avisoFiltro').innerText = '';
+    paginaAtual = 1;
+    montarTabela(dadosFiltrados);
+  }
+
+  function mostrarTodos() {
+    dadosFiltrados = dadosOriginal.slice();
+    document.getElementById('filtroTexto').value = '';
+    paginaAtual = 1;
     montarTabela(dadosFiltrados);
   }
 
@@ -344,71 +464,40 @@
     URL.revokeObjectURL(url);
   }
 
-  document.getElementById('btnDownload').addEventListener('click', () => {
-    const texto = document.getElementById('filtroTexto').value.trim().toLowerCase();
-    if (texto === '') {
-      downloadExcel(dadosOriginal);
-      return;
-    }
-    const termosFiltro = texto.split(',').map(t => t.trim());
+  // Evento do filtro texto (ao soltar tecla)
+  document.getElementById('filtroTexto').addEventListener('keyup', () => aplicarFiltro(dadosOriginal));
+  document.getElementById('btnDownload').addEventListener('click', () => downloadExcel(dadosFiltrados));
 
-    const filtrado = dadosOriginal.filter(row => {
-      if (!row['Registro']) return false;
-      const registrosLinha = row['Registro'].toLowerCase().split(',').map(r => r.trim());
-      return termosFiltro.some(filtro => registrosLinha.includes(filtro));
-    });
-
-    if (filtrado.length === 0) {
-      alert('Nenhum registro encontrado para baixar.');
-      return;
-    }
-    downloadExcel(filtrado);
-  });
-
-  let dadosOriginal = [];
-  let dadosCSV = [];
-
+  // Modal detalhes - para demo, pode ser implementado depois
   function mostrarDetalhes(idx) {
-    const produto = dadosCSV[idx];
-    const container = document.getElementById('detalhesProduto');
-    container.innerHTML = `
+    const modal = document.getElementById('modalDetalhes');
+    const detalhesDiv = document.getElementById('detalhesProduto');
+    const item = dadosFiltrados[idx];
+    if (!item) return;
+    detalhesDiv.innerHTML = `
       <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
-      <h3>Detalhes do produto: ${produto['Produto']}</h3>
-      <p><strong>N° Registro:</strong> ${produto['Registro']}</p>
-      <p><strong>N° Processo:</strong> ${produto['Processo']}</p>
-      <p><strong>Data atualização da Bula:</strong> ${produto['Data Atualização Bulário']}</p>
-      <p><strong>Data atualização na Plataforma:</strong> ${produto['Inclusão na Plataforma']}</p>
-      <div class="bula-links">
-        <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaPacienteProtegido}/?Authorization=Guest" target="_blank">
-          <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Paciente
-        </a>
-        <a href="https://consultas.anvisa.gov.br/api/consulta/medicamentos/arquivo/bula/parecer/${produto.idBulaProfissionalProtegido}/?Authorization=Guest" target="_blank">
-          <img src="https://consultas.anvisa.gov.br/assets/img/pdf.png" alt="PDF" /> Bula Profissional
-        </a>
-      </div>
-      <div class="alerta" style="margin-top: 1rem;">
-        Caso ocorra erro ao acessar os arquivos, <a href="https://consultas.anvisa.gov.br/#/bulario/q/?numeroRegistro=${produto['Registro']}" target="_blank" style="color: #a94442; font-weight: bold;">clique aqui</a> para acessá-los diretamente no Bulário Eletrônico da ANVISA.
-      </div>
+      <h3>${item['Produto']}</h3>
+      <p><strong>Detentor do registro:</strong> ${item['Detentor do registro']}</p>
+      <p><strong>Registro:</strong> ${item['Registro']}</p>
+      <p><strong>Processo:</strong> ${item['Processo'] || 'N/A'}</p>
+      <p><strong>Data Atualização Bulário:</strong> ${item['Data Atualização Bulário']}</p>
+      <p><strong>Inclusão na Plataforma:</strong> ${item['Inclusão na Plataforma'] || 'N/A'}</p>
     `;
-    document.getElementById('modalDetalhes').style.display = 'flex';
+    modal.style.display = 'flex';
   }
-
   function fecharDetalhes() {
     document.getElementById('modalDetalhes').style.display = 'none';
   }
 
-  document.getElementById('modalDetalhes').addEventListener('click', function(e) {
-    if (e.target === this) {
-      fecharDetalhes();
-    }
-  });
-
-  carregarCSV('StatusBulasANVISA.csv', dados => {
-    dadosCSV = dados;
-    dadosOriginal = dados;
-    montarTabela(dados);
-    document.getElementById('filtroTexto').addEventListener('input', () => aplicarFiltro(dadosOriginal));
-  });
+  // Ao carregar a página, carregar CSV e montar tabela
+  window.onload = () => {
+    // Ajuste o caminho do CSV conforme seu ambiente
+    carregarCSV('dbulario-2025-08-07.csv', dados => {
+      dadosOriginal = dados;
+      dadosFiltrados = dados.slice();
+      montarTabela(dadosFiltrados);
+    });
+  };
 </script>
 
 </body>
