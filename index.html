@@ -492,7 +492,7 @@
   // Ao carregar a página, carregar CSV e montar tabela
   window.onload = () => {
     // Ajuste o caminho do CSV conforme seu ambiente
-    carregarCSV('dbulario-2025-08-07.csv', dados => {
+    carregarCSV('StatusBulasANVISA.csv', dados => {
       dadosOriginal = dados;
       dadosFiltrados = dados.slice();
       montarTabela(dadosFiltrados);
