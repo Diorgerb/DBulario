@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DBulário - Monitoramento Bulário Eletrônico</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <style>
     body {
@@ -42,7 +42,6 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-
     /* Ocultar todas as seções por padrão */
     .container > div {
       display: none;
@@ -51,7 +50,14 @@
     #inicio {
       display: block;
     }
-
+    .aviso-origem {
+      background: #f8f9fa;
+      padding: 10px 15px;
+      border-left: 5px solid #0055a5;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #003366;
+    }
     .filtros {
       margin-bottom: 1.5rem;
     }
@@ -59,12 +65,32 @@
       display: block;
       margin: 0.5rem 0 0.25rem;
     }
+    .filtros-rapidos {
+      margin-bottom: 0.75rem;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filtros-rapidos button {
+      padding: 0.4rem 1rem;
+      background-color: #0055a5;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .filtros-rapidos button:hover {
+      background-color: #003f7d;
+    }
     input[type="text"] {
       padding: 0.5rem;
       width: 100%;
       max-width: 500px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      text-align: center;
     }
     table {
       width: 100%;
@@ -93,7 +119,6 @@
       padding: 1rem;
       margin-top: 3rem;
     }
-
     .modal-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -147,36 +172,40 @@
 
 <header>
   <h1>DBulário - Monitoramento Bulário Eletrônico</h1>
+      <div >
+      <strong>ℹ️ Aviso:</strong> Esta base é atualizada automaticamente por um sistema independente a partir dos dados públicos do 
+      <a href="https://consultas.anvisa.gov.br/" target="_blank" style="color:#0055a5;">Consultas Anvisa</a>.
+    </div>
 </header>
 
 <nav>
   <a href="#" onclick="mostrarAba('inicio')">Página Inicial</a>
-  <a href="#" onclick="mostrarAba('listaPersonalizada')">Lista Personalizada</a>
-  <a href="#" onclick="mostrarAba('notificacoesAlertas')">Notificações / Alertas</a>
+  <a href="#" onclick="mostrarAba('listaPersonalizada')">Medicamentos Listados - Bulário Eletrônico</a>
   <a href="#" onclick="mostrarAba('contato')">Fale Conosco</a>
 </nav>
 
 <div class="container">
   <div id="inicio">
-    <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;">
+    <img src="logo.png" alt="Logo DBulário" style="height: 120px; display: block; margin: 0 auto 2rem auto;" />
     <p style="font-size: 1.1rem; line-height: 1.6;">
       A plataforma <strong>DBulário</strong> foi desenvolvida para otimizar o monitoramento das atualizações de bulas de medicamentos publicadas no Bulário Eletrônico da ANVISA.
     </p>
     <p style="font-size: 1.1rem; line-height: 1.6;">
       Seu principal objetivo é facilitar o acesso rápido e estruturado às informações regulatórias, promovendo mais agilidade, rastreabilidade e segurança para profissionais e empresas que atuam na área de Assuntos Regulatórios.
     </p>
-    <p style="text-align: center;">
-      <a href="ApresentacaoDBulario.pdf" target="_blank" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
-        📄 Ver Apresentação da Plataforma
-      </a>
-    </p>
   </div>
 
   <div id="listaPersonalizada" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif; text-align: center;">
+
     <h2 style="margin-bottom: 1.5rem;">💊 Medicamentos Listados - Bulário Eletrônico</h2>
     <div class="filtros">
-      <label>Filtrar por número de registro (separe por vírgula):</label><br>
-      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;">
+      <div class="filtros-rapidos">
+        <button onclick="filtrarPorPeriodo(0)">Hoje</button>
+        <button onclick="filtrarPorPeriodo(3)">Últimos 3 dias</button>
+        <button onclick="filtrarPorPeriodo(7)">Últimos 7 dias</button>
+      </div>
+      <label>Filtrar por número de registro (separe por vírgula):</label><br />
+      <input type="text" id="filtroTexto" placeholder="Ex: 123456789,987654321" style="width: 300px; text-align: center;" />
     </div>
     <button id="btnDownload" style="margin-top: 10px; padding: 0.5rem 1rem; cursor: pointer;">Download Excel</button>
     <div class="alerta" id="avisoFiltro"></div>
@@ -187,22 +216,6 @@
     <div class="modal-content" id="detalhesProduto">
       <button class="modal-close" onclick="fecharDetalhes()">&times;</button>
     </div>
-  </div>
-
-  <div id="notificacoesAlertas" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif;">
-    <h2 style="text-align: center; margin-bottom: 1.5rem;">📨 Notificações / Alertas</h2>
-    <p style="font-size: 1.1rem; line-height: 1.6;">
-      Este serviço está disponível para contratação por empresas ou profissionais independentes.
-    </p>
-    <p style="font-size: 1.1rem; line-height: 1.6;">
-      A plataforma atual que você está utilizando funciona como uma demonstração (demo) e uma alternativa para acompanhamento básico.
-    </p>
-    <p style="font-size: 1.1rem; line-height: 1.6;">
-      As empresas podem estabelecer listas de produtos para receberem alertas via e-mail sempre que as bulas desses medicamentos forem atualizadas.
-    </p>
-    <p style="margin-top: 2rem; text-align: center;">
-      📌 <strong>Se tiver interesse em contratar este serviço, entre em contato.</strong>
-    </p>
   </div>
 
   <div id="contato" style="max-width: 800px; margin: 0 auto; padding: 2rem; font-family: Arial, sans-serif;">
@@ -221,8 +234,8 @@
 </div>
 
 <footer>
-  &copy; 2025 - DBulário <br>
-  Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br>
+  &copy; 2025 - DBulário <br />
+  Esta página tem finalidade exclusivamente informativa e foi desenvolvida com base em dados públicos disponibilizados pela ANVISA. <br />
   Essa aplicação não possui vínculo com a ANVISA e não substitui o Bulário Eletrônico.
 </footer>
 
@@ -233,7 +246,9 @@
     });
     document.getElementById(id).style.display = 'block';
   }
+</script>
 
+<script>
   function carregarCSV(caminho, callback) {
     fetch(caminho)
       .then(response => response.text())
@@ -266,20 +281,43 @@
   }
 
   function aplicarFiltro(dados) {
-    const texto = document.getElementById('filtroTexto').value.trim();
+    const texto = document.getElementById('filtroTexto').value.trim().toLowerCase();
     if (texto === '') {
       document.getElementById('avisoFiltro').innerText = '';
       montarTabela(dados);
       return;
     }
-    const termos = texto.split(',').map(t => t.trim().toLowerCase());
-    const filtrado = dados.filter(row =>
-      termos.some(termo =>
-        row['Registro']?.toLowerCase().includes(termo)
-      )
-    );
+    const termosFiltro = texto.split(',').map(t => t.trim());
+
+    // Para cada linha, verificar se algum registro nela (separado por vírgula) corresponde a algum termo do filtro
+    const filtrado = dados.filter(row => {
+      if (!row['Registro']) return false;
+
+      // Extrair registros separados por vírgula da célula
+      const registrosLinha = row['Registro'].toLowerCase().split(',').map(r => r.trim());
+      // Verificar se algum registro da linha bate com algum termo do filtro
+      return termosFiltro.some(filtro => registrosLinha.includes(filtro));
+    });
+
     document.getElementById('avisoFiltro').innerText = filtrado.length ? '' : 'Nenhum registro encontrado.';
     montarTabela(filtrado.length ? filtrado : []);
+  }
+
+  function filtrarPorPeriodo(dias) {
+    const hoje = new Date();
+    const dadosFiltrados = dadosOriginal.filter(row => {
+      if (!row['Data Atualização Bulário']) return false;
+      const partes = row['Data Atualização Bulário'].split('/');
+      if (partes.length !== 3) return false;
+      const data = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T00:00:00`);
+      const diffDias = (hoje - data) / (1000 * 60 * 60 * 24);
+      return diffDias <= dias;
+    });
+
+    // Atualiza a tabela e limpa filtro de texto para não confundir o usuário
+    document.getElementById('filtroTexto').value = '';
+    document.getElementById('avisoFiltro').innerText = '';
+    montarTabela(dadosFiltrados);
   }
 
   function downloadExcel(dados) {
@@ -307,17 +345,19 @@
   }
 
   document.getElementById('btnDownload').addEventListener('click', () => {
-    const texto = document.getElementById('filtroTexto').value.trim();
+    const texto = document.getElementById('filtroTexto').value.trim().toLowerCase();
     if (texto === '') {
       downloadExcel(dadosOriginal);
       return;
     }
-    const termos = texto.split(',').map(t => t.trim().toLowerCase());
-    const filtrado = dadosOriginal.filter(row =>
-      termos.some(termo =>
-        row['Registro']?.toLowerCase().includes(termo)
-      )
-    );
+    const termosFiltro = texto.split(',').map(t => t.trim());
+
+    const filtrado = dadosOriginal.filter(row => {
+      if (!row['Registro']) return false;
+      const registrosLinha = row['Registro'].toLowerCase().split(',').map(r => r.trim());
+      return termosFiltro.some(filtro => registrosLinha.includes(filtro));
+    });
+
     if (filtrado.length === 0) {
       alert('Nenhum registro encontrado para baixar.');
       return;
@@ -325,8 +365,8 @@
     downloadExcel(filtrado);
   });
 
-  let dadosCSV = [];
   let dadosOriginal = [];
+  let dadosCSV = [];
 
   function mostrarDetalhes(idx) {
     const produto = dadosCSV[idx];
